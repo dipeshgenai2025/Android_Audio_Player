@@ -29,6 +29,8 @@ public class AudioPlayerActivity extends AppCompatActivity {
     private ActivityAudioPlayerBinding viewBinding;
     private ExoPlayer exoPlayer;
     private Uri selectedAudioUri;
+    private String currentPlayerState = "Player Status: Player.STATE_IDLE";
+    private boolean isCurrentlyPlaying = false;
 
     // Activity Result Launcher for file selection
     private final ActivityResultLauncher<String> audioFileLauncher = registerForActivityResult(
@@ -70,7 +72,8 @@ public class AudioPlayerActivity extends AppCompatActivity {
                     break;
             }
             Log.d(TAG, "Playback state changed to " + stateString);
-            viewBinding.tvStatus.setText("Player Status: " + stateString);
+            currentPlayerState = "Player Status: " + stateString;
+            updateStatusDisplay();
 
             if (playbackState == Player.STATE_ENDED) {
                 Toast.makeText(AudioPlayerActivity.this, "Audio Finished", Toast.LENGTH_SHORT).show();
@@ -85,7 +88,8 @@ public class AudioPlayerActivity extends AppCompatActivity {
         @Override
         public void onIsPlayingChanged(boolean isPlaying) {
             Log.d(TAG, "isPlaying: " + isPlaying);
-            viewBinding.tvStatus.append(isPlaying ? "\nPlaying" : "\nPaused");
+            isCurrentlyPlaying = isPlaying;
+            updateStatusDisplay();
         }
 
         @SuppressLint("SetTextI18n")
@@ -100,7 +104,8 @@ public class AudioPlayerActivity extends AppCompatActivity {
                     Toast.LENGTH_LONG
             ).show();
             // Update the TextView with the error code name
-            viewBinding.tvStatus.setText(getString(R.string.player_error) + errorCodeNameString);
+            currentPlayerState = getString(R.string.player_error) + errorCodeNameString;
+            updateStatusDisplay();
         }
     };
 
@@ -167,6 +172,16 @@ public class AudioPlayerActivity extends AppCompatActivity {
             exoPlayer.prepare();
             Log.d(TAG, "ExoPlayer initialized with raw audio resource");
         }
+    }
+
+    private void updateStatusDisplay() {
+        String displayText = currentPlayerState;
+        if (isCurrentlyPlaying) {
+            displayText += "\nPlaying";
+        } else if (currentPlayerState.contains("Player.STATE_READY")) {
+            displayText += "\nPaused";
+        }
+        viewBinding.tvStatus.setText(displayText);
     }
 
     private void releasePlayer() {
