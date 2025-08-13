@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">AudioFun</string>
+    <string name="player_status_idle">Player Status: Idle</string>
+    <string name="player_error">"Player Error: "</string>
+    <string name="load_audio_file">Load Audio File</string>
+    <string name="select_audio_file">Select Audio File</string>
+    <string name="audio_file_selected">Audio file selected</string>
+    <string name="no_audio_file_selected">No audio file selected</string>
+    <string name="error_loading_audio">Error loading audio file</string>
+</resources>
