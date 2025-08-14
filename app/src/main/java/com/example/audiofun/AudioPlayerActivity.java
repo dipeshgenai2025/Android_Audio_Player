@@ -269,8 +269,8 @@ public class AudioPlayerActivity extends AppCompatActivity {
         
         // Configure visualizer for better animation and visibility
         viewBinding.frequencyVisualizer.setBarCount(11);
-        viewBinding.frequencyVisualizer.setAnimationSpeed(0.2f); // Even faster animation
-        viewBinding.frequencyVisualizer.setGravity(0.7f); // Less gravity for more responsive bars
+        viewBinding.frequencyVisualizer.setAnimationSpeed(0.4f); // Even faster animation
+        viewBinding.frequencyVisualizer.setGravity(0.9f); // Less gravity for more responsive bars
     }
     
     /**
