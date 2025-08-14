@@ -7,6 +7,8 @@
     android:background="@android:color/white"
     tools:context=".AudioPlayerActivity">
 
+    <!-- Audio Analysis Controls -->
+
     <Button
         android:id="@+id/btn_load_audio"
         android:layout_width="wrap_content"
@@ -22,10 +24,10 @@
 
     <androidx.media3.ui.PlayerView
         android:id="@+id/player_view"
-        android:layout_width="0dp"
-        android:layout_height="200dp"
+        android:layout_width="380dp"
+        android:layout_height="194dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -39,14 +41,136 @@
 
     <TextView
         android:id="@+id/tv_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_width="376dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="12dp"
         android:text="@string/player_status_idle"
         android:textColor="@android:color/black"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.542"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/player_view" />
+
+    <TextView
+        android:id="@+id/tv_analysis_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/audio_analysis"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_status" />
+
+    <Button
+        android:id="@+id/btn_start_analysis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:padding="12dp"
+        android:text="@string/start_analysis"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@id/btn_stop_analysis"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_analysis_title" />
+
+    <Button
+        android:id="@+id/btn_stop_analysis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:padding="12dp"
+        android:text="@string/stop_analysis"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btn_start_analysis"
+        app:layout_constraintTop_toTopOf="@id/btn_start_analysis" />
+
+    <TextView
+        android:id="@+id/tv_buffer_size_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/buffer_size_label"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.522"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_start_analysis" />
+
+    <Button
+        android:id="@+id/btn_buffer_25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:padding="8dp"
+        android:text="@string/buffer_25ms"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@id/btn_buffer_50"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_buffer_size_label" />
+
+    <Button
+        android:id="@+id/btn_buffer_50"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:padding="8dp"
+        android:text="@string/buffer_50ms"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@id/btn_buffer_100"
+        app:layout_constraintStart_toEndOf="@id/btn_buffer_25"
+        app:layout_constraintTop_toTopOf="@id/btn_buffer_25" />
+
+    <Button
+        android:id="@+id/btn_buffer_100"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:padding="8dp"
+        android:text="@string/buffer_100ms"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btn_buffer_50"
+        app:layout_constraintTop_toTopOf="@id/btn_buffer_50" />
+
+    <!-- Frequency Visualizer Section -->
+
+    <TextView
+        android:id="@+id/tv_visualizer_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Frequency Spectrum (27Hz - 15kHz)"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_buffer_100" />
+
+    <com.example.audiofun.FrequencyVisualizerView
+        android:id="@+id/frequency_visualizer"
+        android:layout_width="378dp"
+        android:layout_height="248dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_visualizer_title"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
