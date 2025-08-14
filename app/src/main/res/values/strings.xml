@@ -7,4 +7,13 @@
     <string name="audio_file_selected">Audio file selected</string>
     <string name="no_audio_file_selected">No audio file selected</string>
     <string name="error_loading_audio">Error loading audio file</string>
+    
+    <!-- Audio Analysis Strings -->
+    <string name="audio_analysis">Audio Analysis</string>
+    <string name="start_analysis">Start Analysis</string>
+    <string name="stop_analysis">Stop Analysis</string>
+    <string name="buffer_size_label">Buffer Size (ms):</string>
+    <string name="buffer_25ms">25ms</string>
+    <string name="buffer_50ms">50ms</string>
+    <string name="buffer_100ms">100ms</string>
 </resources>
