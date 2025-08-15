@@ -2,12 +2,9 @@ package com.example.audiofun;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,14 +13,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.OptIn;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
@@ -31,9 +22,7 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.media3.common.util.Util;
 import androidx.media3.exoplayer.ExoPlayer;
 
-import com.example.audiofun.databinding.ActivityAudioPlayerBinding; // Generated ViewBinding class
-
-import java.util.List;
+import com.example.audiofun.databinding.ActivityAudioPlayerBinding;
 
 @OptIn(markerClass = UnstableApi.class) // Annotation for ExoPlayer APIs that might change
 public class AudioPlayerActivity extends AppCompatActivity {
@@ -49,11 +38,6 @@ public class AudioPlayerActivity extends AppCompatActivity {
     // Audio analysis components
     private AudioAnalyzer audioAnalyzer;
     private boolean isAnalyzing = false;
-    
-    // Visualization components - removed fixed timer
-    // private Handler updateHandler;
-    // private Runnable updateRunnable;
-    // private static final int UPDATE_INTERVAL_MS = 50; // 20 FPS for smooth animation
 
     // Activity Result Launcher for file selection
     private final ActivityResultLauncher<String> audioFileLauncher = registerForActivityResult(
@@ -114,11 +98,6 @@ public class AudioPlayerActivity extends AppCompatActivity {
 
             if (playbackState == Player.STATE_ENDED) {
                 Toast.makeText(AudioPlayerActivity.this, "Audio Finished", Toast.LENGTH_SHORT).show();
-                // Optionally:
-                // if (exoPlayer != null) {
-                //     exoPlayer.seekToDefaultPosition();
-                //     exoPlayer.setPlayWhenReady(false);
-                // }
             }
         }
 
@@ -208,22 +187,16 @@ public class AudioPlayerActivity extends AppCompatActivity {
         audioAnalyzer = new AudioAnalyzer(100, customBands);
         
         // Set up callback for real-time visualization updates
-        audioAnalyzer.setOnFrequencyAnalysisListener(new AudioAnalyzer.OnFrequencyAnalysisListener() {
-            @Override
-            public void onFrequencyAnalysisUpdated(List<AudioAnalyzer.FrequencyBand> frequencyBands) {
-                // Update visualization on main thread
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isAnalyzing && frequencyBands != null && !frequencyBands.isEmpty()) {
-                            viewBinding.frequencyVisualizer.updateFrequencyBands(frequencyBands);
-                        } else if (!isAnalyzing && viewBinding.frequencyVisualizer.isActive()) {
-                            // Stop visualizer if analysis is not active
-                            viewBinding.frequencyVisualizer.stop();
-                        }
-                    }
-                });
-            }
+        audioAnalyzer.setOnFrequencyAnalysisListener(frequencyBands -> {
+            // Update visualization on main thread
+            runOnUiThread(() -> {
+                if (isAnalyzing && frequencyBands != null && !frequencyBands.isEmpty()) {
+                    viewBinding.frequencyVisualizer.updateFrequencyBands(frequencyBands);
+                } else if (!isAnalyzing && viewBinding.frequencyVisualizer.isActive()) {
+                    // Stop visualizer if analysis is not active
+                    viewBinding.frequencyVisualizer.stop();
+                }
+            });
         });
         
         Log.d(TAG, "AudioAnalyzer initialized with " + customBands.length + " frequency bands");
@@ -255,31 +228,10 @@ public class AudioPlayerActivity extends AppCompatActivity {
      * Initialize visualization update mechanism
      */
     private void initializeVisualization() {
-        // Removed fixed timer and updateRunnable
-        // updateHandler = new Handler(Looper.getMainLooper());
-        // updateRunnable = new Runnable() {
-        //     @Override
-        //     public void run() {
-        //         updateVisualization();
-        //         if (isAnalyzing) {
-        //             updateHandler.postDelayed(this, UPDATE_INTERVAL_MS);
-        //         }
-        //     }
-        // };
-        
         // Configure visualizer for better animation and visibility
         viewBinding.frequencyVisualizer.setBarCount(11);
         viewBinding.frequencyVisualizer.setAnimationSpeed(0.4f); // Even faster animation
         viewBinding.frequencyVisualizer.setGravity(0.9f); // Less gravity for more responsive bars
-    }
-    
-    /**
-     * Update the frequency visualization with current data
-     * This method is now called via callback from AudioAnalyzer
-     */
-    private void updateVisualization() {
-        // This method is kept for compatibility but is no longer used
-        // Visualization updates are now handled via callback from AudioAnalyzer
     }
 
     private void openAudioFilePicker() {
@@ -318,6 +270,7 @@ public class AudioPlayerActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     private void updateStatusDisplay() {
         String displayText = currentPlayerState;
         if (isCurrentlyPlaying) {
@@ -408,21 +361,6 @@ public class AudioPlayerActivity extends AppCompatActivity {
             updateStatusDisplay();
         }
     }
-    
-    /**
-     * Set custom frequency bands
-     * @param numBands Number of frequency bands (10-20 as requested)
-     */
-    public void setCustomFrequencyBands(int numBands) {
-        if (audioAnalyzer != null && numBands >= 10 && numBands <= 20) {
-            AudioAnalyzer.FrequencyBand[] customBands = AudioAnalyzer.createLogarithmicBands(numBands, 27, 15000);
-            audioAnalyzer.setFrequencyBands(customBands);
-            viewBinding.frequencyVisualizer.setBarCount(numBands);
-            
-            Log.d(TAG, "Frequency bands updated to " + numBands + " bands");
-            Toast.makeText(this, "Frequency bands updated to " + numBands, Toast.LENGTH_SHORT).show();
-        }
-    }
 
     private void releasePlayer() {
         if (exoPlayer != null) {
@@ -453,11 +391,6 @@ public class AudioPlayerActivity extends AppCompatActivity {
         if (Util.SDK_INT <= 23 || exoPlayer == null) {
             initializePlayer();
         }
-        
-        // Resume visualization if analyzing
-        if (isAnalyzing) {
-            // updateHandler.post(updateRunnable); // Removed fixed timer
-        }
     }
 
     @Override
@@ -479,9 +412,6 @@ public class AudioPlayerActivity extends AppCompatActivity {
         if (Util.SDK_INT > 23) { // Android N (API 24) and higher
             releasePlayer();
         }
-        
-        // Stop visualization updates
-        // updateHandler.removeCallbacks(updateRunnable); // Removed fixed timer
     }
 
     @Override
@@ -496,10 +426,5 @@ public class AudioPlayerActivity extends AppCompatActivity {
         if (isAnalyzing && audioAnalyzer != null) {
             audioAnalyzer.stopRecording();
         }
-        
-        // Clean up visualization
-        // if (updateHandler != null) { // Removed fixed timer
-        //     updateHandler.removeCallbacks(updateRunnable);
-        // }
     }
 }
